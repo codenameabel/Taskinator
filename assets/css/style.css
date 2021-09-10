@@ -1,10 +1,10 @@
 * {
   box-sizing: border-box;
-}
+} 
 
 :root {
-  --primary: #44e9ff;
-  --secondary: #497980;
+  --primary: #6be9fa;
+  --secondary: #3a848f;
   --tertiary: rgb(192, 246, 253);
   --grey: #333;
   font-size: 62.5%;
