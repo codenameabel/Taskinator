@@ -7,6 +7,15 @@ var taskFormHandler = function (event) {
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
 
+    // CHECK IF INPUT VALUES ARE EMPTY STRINGS
+    if (!taskNameInput || !taskTypeInput) {
+        alert("You need to fill out the task form!");
+        return false; 
+    }
+
+    // RESETS THE FORM 
+    formEl.reset();
+
     // PACKAGE UP DATA AS AN OBJECT
     var taskDataObj = {
         name: taskNameInput,
