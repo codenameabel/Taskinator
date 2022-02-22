@@ -5,6 +5,9 @@ var pageContentEl = document.querySelector("#page-content");
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
 
+// VARIABLE THAT HOLDS ARRAY OF TASKS
+var tasks = [];
+
 var taskFormHandler = function (event) {
     event.preventDefault();
 
@@ -33,7 +36,8 @@ var taskFormHandler = function (event) {
         // PACKAGE UP DATA AS AN OBJECT
         var taskDataObj = {
             name: taskNameInput,
-            type: taskTypeInput
+            type: taskTypeInput,
+            status: "to do"
         };
 
         // SEND IT AS AN ARGUMENT TO createTaskEl 
@@ -49,12 +53,23 @@ var completeEditTask = function (taskName, taskType, taskId) {
     taskSelected.querySelector("h3.task-name").textContent = taskName;
     taskSelected.querySelector("span.task-type").textContent = taskType;
 
+    // LOOP TRHOUGH TASKS ARRAY AND TASK OBJECT WITH NEW CONTENT
+    for (var i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    };
+
     alert("Task Updated!");
     formEl.removeAttribute("data-task-id");
     document.querySelector("#save-task").textContent = "Add Task";
 };
 
 var createTaskEl = function (taskDataObj) {
+    console.log(taskDataObj);
+    console.log(taskDataObj.status);
+
     // CREATES LIST ITEM WITH CSS STYLE
     var listItemEl = document.createElement("li");
     listItemEl.className = "task-item";
@@ -77,6 +92,10 @@ var createTaskEl = function (taskDataObj) {
 
     // ADD ENTIRE LIST ITEM TO LIST
     tasksToDoEl.appendChild(listItemEl);
+
+    // ADDING ID VALUE OF TASK AS A PROPERTY TO taskDataObj
+    taskDataObj.id = taskIdCounter;
+    tasks.push(taskDataObj);
 
     // INCREASE TASK COUNTER FOR NEXT UNIQUE ID
     taskIdCounter++;
@@ -158,6 +177,18 @@ var taskButtonHandler = function (event) {
 var deleteTask = function (taskId) {
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
     taskSelected.remove();
+
+    // CREATE NEW ARRAY TO HOLD UPDATED LIST OF TASKS
+    var updatedTaskArr = [];
+    // LOOP THROUGH CURRENT TASKS
+    for (i = 0; i < tasks.length; i++) {
+        // IF tasks[i].id DOESN'T MATCH THE VALUE OF taskId, LETS KEEP THAT TASK AND PUSH IT TO THE NEW ARRAY
+        if (tasks[i].id !== parseInt(taskId)) {
+            updatedTaskArr.push(tasks[i]);
+        }
+    }
+    // REASSIGN TASKS ARRAY TO BE THE SAME AS updatedTaskArr
+    tasks = updatedTaskArr;
 };
 
 var editTask = function (taskId) {
@@ -181,7 +212,7 @@ var editTask = function (taskId) {
 };
 
 // FUNCTION FOR HANDLING WHAT TASK COLUMN LIST ELEMENT BELONGS TO
-var taskStatusChangeHandler = function() {
+var taskStatusChangeHandler = function () {
     // GET THE TASK ITEM'S ID
     var taskId = event.target.getAttribute("data-task-id");
     // GET THE CURRENTLY SELECTED OPTION'S VALUE AND CONVERT TO LOWERCASE
@@ -191,13 +222,22 @@ var taskStatusChangeHandler = function() {
 
     if (statusValue === "to do") {
         tasksToDoEl.appendChild(taskSelected);
-    } 
-    else if (statusValue === "in progress") { 
+    }
+    else if (statusValue === "in progress") {
         tasksInProgressEl.appendChild(taskSelected);
     }
     else if (statusValue === "completed") {
         tasksCompletedEl.appendChild(taskSelected);
     }
+
+    // UPDATES TASK'S IN TASK ARRAY
+    for (i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
+            tasks[i].status = statusValue;
+        }
+    }
+
+    console.log(tasks);
 };
 
 pageContentEl.addEventListener("click", taskButtonHandler);
